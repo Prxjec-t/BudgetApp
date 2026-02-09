@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BudgetWork</title>
+  </head>
+  <body>
+    <header>
+      <h1>BudgetWork</h1>
+    </header>
+    
+    <div id="balance" class="balance">
+      <p>Saldo</p>
+      <p>Utgift</p>
+    </div>
+
+    <div class="app-container">
+      <div class="input-container">
+
+        <form id="transactionForm" class="transaction-form">
+
+          <label class="expenses">
+            <span>Utgifter</span>
+
+            <select name="expenses" id="expenses">
+              <option value="blank" disabled selected>Välj Kategori</option>
+              <option value="entertainment">Underhållning</option>
+              <option value="foodAndDrinks">Mat & Dryck</option>
+              <option value="clothing">Kläder</option>
+              <option value="householdItems">Hushållsvaror</option>
+              <option value="travel">Resor</option>
+              <option value="vehicles">Fordon</option>
+            </select>
+          </label>
+
+
+          <label class="income">
+            <span>Inkomst</span>
+            <select name="income" id="income">
+              <option value="blank" disabled selected>Välj Kategori</option>
+              <option value="salary">Lön</option>
+              <option value="sales">Såld vara</option>
+              <option value="investment">Investeringar</option>
+              <option value="gift">Gåva</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Belopp</span>
+            <input type="number" id="amount" step="0.01" required />
+          </label>
+
+          <button id="register">Registrera</button>
+        </form>
+      </div>
+
+      <div class="transactions-container">
+        <h2>Transaktioner</h2>
+
+        <div id="transactionList" class="transaction-list">
+          <div class="transaction income">
+            <span>Freelance Work</span>
+            <span class="transaction-amount-container">5000kr <button class="delete-btn">Delete</button></span>
+        </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
