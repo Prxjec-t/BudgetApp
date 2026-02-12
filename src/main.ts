@@ -1,4 +1,4 @@
-// @ts-nocheck
+//@ts-nocheck
 
 import './style.css';
 import categories from './categories.json';
@@ -6,20 +6,22 @@ import type { ITransaction, ITransactionList } from './models';
 
 class BudgetTracker {
   private transactions: ITransactionList;
-  private form: HTMLFormElement;
-  private transactionList: HTMLElement;
-  private balanceElement: HTMLElement;
+  private form: HTMLFormElement | null;
+  private transactionList: HTMLElement | null;
+  private balanceElement: HTMLElement | null;
 
   constructor() {
     this.transactions = this.loadTransactions();
-    this.form = document.getElementById('transactionForm') as HTMLFormElement;
-    this.transactionList = document.getElementById('transactionList') as HTMLDivElement;
-    this.balanceElement = document.getElementById('balance') as HTMLDivElement;
+    this.form = document.getElementById('transactionForm');
+    this.transactionList = document.getElementById('transactionList');
+    this.balanceElement = document.getElementById('balance');
 
-    this.initEventListeners();
-    this.populateCategories();
-    this.renderTransactions();
-    this.updateBalance();
+    if (this.form) {
+      this.initEventListeners();
+      this.populateCategories();
+      this.renderTransactions();
+      this.updateBalance();
+    }
   }
 
   loadTransactions(): ITransactionList {
@@ -41,37 +43,45 @@ class BudgetTracker {
   clearForm() {
     this.form.reset();
 
-    (document.getElementById('comment') as HTMLInputElement).value = '';
+    document.getElementById('comment').value = '';
     document.getElementById('expenseCategoryWrap').style.display = 'none';
     document.getElementById('incomeCategoryWrap').style.display = 'none';
   }
 
   addTransaction() {
-    const typeElement = document.querySelector('input[name="type"]:checked') as HTMLInputElement;
-    const type = typeElement ? (typeElement.value as 'income' | 'expenses') : null;
-    const amountInput = document.getElementById('amount') as HTMLDivElement;
+    const typeElement = document.querySelector('input[name="type"]:checked');
+    const type = typeElement ? typeElement.value : null;
+    const amountInput = document.getElementById('amount');
     const amount = parseFloat(amountInput.value);
 
-    const commentInput = document.getElementById('comment') as HTMLInputElement;
+    const selectId = type === 'expenses' ? 'expenses' : 'income';
+    const select = document.getElementById(selectId);
+
+    const categoryValue = select ? select.value : '';
+    const categoryText = select ? select.options[select.selectedIndex].text : '';
+
+    const commentInput = document.getElementById('comment');
     const comment = commentInput.value.trim();
 
     let category = '';
     if (type === 'expenses') {
-      const select = document.getElementById('expenses') as HTMLSelectElement;
+      const select = document.getElementById('expenses');
       category = select.options[select.selectedIndex].text;
     } else if (type === 'income') {
-      const select = document.getElementById('income') as HTMLSelectElement;
+      const select = document.getElementById('income');
       category = select.options[select.selectedIndex].text;
     }
 
-    if (!type || category === '' || isNaN(amount)) {
-      alert('Var snäll och lägg till en kategori och summa.');
+    if (!type || categoryValue === '' || isNaN(amount) || amount <= 0) {
+      this.showToast('Vänligen välj en kategori och ange ett belopp.');
       return;
     }
 
+    this.showToast('Transaktion tillagd!', 'success');
+
     const transaction = {
       id: Date.now(),
-      description: category,
+      description: categoryText,
       amount: type === 'expenses' ? -amount : amount,
       type: type,
       date: new Date().toLocaleDateString('sv-SE'),
@@ -87,10 +97,15 @@ class BudgetTracker {
 
   renderTransactions() {
     this.transactionList.innerHTML = '';
+
     this.transactions
       .slice()
       .sort((a, b) => b.id - a.id)
       .forEach((transaction) => {
+        const formattedAmount = Math.abs(transaction.amount).toLocaleString('sv-SE', {
+          minimumFractionDigits: 2,
+        });
+
         const transactionDiv = document.createElement('div');
         transactionDiv.classList.add('transaction', transaction.type);
         transactionDiv.innerHTML = `
@@ -98,24 +113,24 @@ class BudgetTracker {
             <strong>${transaction.description}</strong>
             ${transaction.comment ? `<i>${transaction.comment}</i>` : ''}
             <span class="transaction-amount-container">
-            ${Math.abs(transaction.amount).toFixed(2)} kr 
+            ${formattedAmount} kr 
             <button class="delete-btn" data-id="${transaction.id}">Delete</button></span>`;
         this.transactionList.appendChild(transactionDiv);
       });
+
     this.attachDeleteEventListeners();
   }
 
   attachDeleteEventListeners() {
     this.transactionList.querySelectorAll('.delete-btn').forEach((button) => {
       button.addEventListener('click', () => {
-        this.deleteTransactions(Number(button.dataset.id));
+        this.deleteTransactions(Number((button as HTMLElement).dataset.id));
       });
     });
   }
 
   deleteTransactions(id: number): void {
     this.transactions = this.transactions.filter((transaction) => transaction.id !== id);
-
     this.saveTransactions();
     this.renderTransactions();
     this.updateBalance();
@@ -127,6 +142,11 @@ class BudgetTracker {
       .filter((item) => item.type === 'expenses')
       .reduce((acc, item) => acc + item.amount, 0);
 
+    const formattedTotal = total.toLocaleString('sv-SE', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
     let balanceColor = 'inherit';
 
     if (total > 0) {
@@ -136,8 +156,8 @@ class BudgetTracker {
     }
 
     this.balanceElement.innerHTML = `
-    <p style="color: ${balanceColor};">Saldo: ${total.toFixed(2)} kr </p>
-    <p>Utgifter: ${Math.abs(expensesOnly).toFixed(2)} kr</p>
+    <p style="color: ${balanceColor};">Saldo: ${formattedTotal} kr </p>
+    <p>Utgifter: ${Math.abs(expensesOnly).toLocaleString('sv-SE', { minimumFractionDigits: 2 })} kr</p>
     `;
   }
 
@@ -145,15 +165,32 @@ class BudgetTracker {
     const expenseSelect = document.getElementById('expenses');
     const incomeSelect = document.getElementById('income');
 
-    categories.expenses.forEach((cat) => {
-      const option = new Option(cat, cat.toLowerCase());
-      expenseSelect.add(option);
-    });
+    if (expenseSelect) {
+      categories.expenses.forEach((cat) => {
+        expenseSelect.add(new Option(cat, cat.toLowerCase()));
+      });
+    }
+    if (incomeSelect) {
+      categories.income.forEach((cat) => {
+        incomeSelect.add(new Option(cat, cat.toLowerCase()));
+      });
+    }
+  }
 
-    categories.income.forEach((cat) => {
-      const option = new Option(cat, cat.toLowerCase());
-      incomeSelect.add(option);
-    });
+  showToast(message, type = 'error') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('fade-out');
+      setTimeout(() => toast.remove(), 500);
+    }, 3000);
   }
 }
 
@@ -165,7 +202,7 @@ const incomeWrap = document.querySelector('#incomeCategoryWrap');
 
 typeRadios.forEach((radio) => {
   radio.addEventListener('change', (e) => {
-    const selectedType = (e.target as HTMLInputElement).value;
+    const selectedType = e.target.value;
 
     if (selectedType === 'expenses') {
       expenseWrap.style.display = 'block';
@@ -178,15 +215,10 @@ typeRadios.forEach((radio) => {
 });
 
 let isDarkMode = false;
-const toggleButton = document.getElementById('toggleButton') as HTMLButtonElement;
-const themeName = document.getElementById('themeName') as HTMLSpanElement;
+const toggleButton = document.getElementById('toggleButton');
 
 toggleButton?.addEventListener('click', () => {
   isDarkMode = !isDarkMode;
   document.body.classList.toggle('dark-mode', isDarkMode);
   toggleButton.classList.toggle('active', isDarkMode);
-
-  if (themeName) {
-    themeName.textContent = isDarkMode ? 'Dark' : 'Light';
-  }
 });

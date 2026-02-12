@@ -12,10 +12,12 @@
 }
 
 header {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 2rem auto;
+  min-height: 60px;
 }
 
 body {
@@ -55,9 +57,11 @@ body {
 }
 
 .toggle-container {
+  position: absolute;
+  right: 2rem;
   display: flex;
-  justify-content: center;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .toggle-button {
@@ -92,12 +96,6 @@ body {
 .toggle-button.active .toggle-circle {
   left: 32px;
   background-color: #fff;
-}
-
-.theme-info {
-  text-align: center;
-  font-size: 1.2rem;
-  margin-left: 2px;
 }
 
 .balance {
@@ -260,7 +258,50 @@ input[value='income']:checked + .type-button {
   transform: translateY(0);
 }
 
-@media (max-width: 768px) {
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  min-width: 250px;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease forwards;
+}
+
+.toast.success {
+  background-color: var(--secondary-color);
+}
+
+.toast.error {
+  background-color: var(--danger-color);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+@media (max-width: 1028px) {
   .app-container {
     flex-direction: column;
     padding: 1rem;
