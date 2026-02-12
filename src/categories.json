@@ -1,4 +1,4 @@
 {
-  "income": ["Lön", "Gåva", "Investeringar"],
-  "expenses": ["Mat & Dryck", "Underhållning", "Kläder"]
+  "income": ["Lön", "Gåva", "Investeringar", "Annat"],
+  "expenses": ["Mat & Dryck", "Underhållning", "Kläder", "Fordon", "Annat"]
 }
