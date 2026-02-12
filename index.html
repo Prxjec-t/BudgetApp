@@ -1,72 +1,91 @@
 <!doctype html>
 <html lang="sv">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BudgetWork</title>
-  </head>
-  <body>
-    <header>
-      <h1>BudgetWork</h1>
-    </header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>BudgetWork</title>
+    </head>
+    <body>
+        <header>
+            <h1>BudgetWork</h1>
+        </header>
 
-    <div id="balance" class="balance">
-      <p>Saldo</p>
-      <p>Utgift</p>
-    </div>
-
-    <div class="app-container">
-    <div class="input-container">
-      <form id="transactionForm" class="transaction-form">
-        <div class="transaction-type">
-          <label class="type-label">
-            <input type="radio" name="type" value="income" id="typeIncome" />
-            <span class="type-button">Inkomst</span>
-          </label>
-
-          <label class="type-label">
-            <input type="radio" name="type" value="expenses" id="typeExpense" />
-            <span class="type-button">Utgift</span>
-          </label>
+        <div id="balance" class="balance">
+            <p>Saldo</p>
+            <p>Utgift</p>
         </div>
 
-        <div id="incomeCategoryWrap" class="income-category">
-          <span>Kategori (Inkomst)</span>
-          <label class="income">
-            <select name="income" id="income">
-              <option value="" disabled selected>Välj Kategori</option>
-            </select>
-          </label>
+        <div class="app-container">
+            <div class="input-container">
+                <form id="transactionForm" class="transaction-form">
+                    <div class="transaction-type">
+                        <label class="type-label">
+                            <input
+                                type="radio"
+                                name="type"
+                                value="income"
+                                id="typeIncome"
+                            />
+                            <span class="type-button">Inkomst</span>
+                        </label>
+
+                        <label class="type-label">
+                            <input
+                                type="radio"
+                                name="type"
+                                value="expenses"
+                                id="typeExpense"
+                            />
+                            <span class="type-button">Utgift</span>
+                        </label>
+                    </div>
+
+                    <div id="incomeCategoryWrap" class="income-category">
+                        <span>Kategori (Inkomst)</span>
+                        <label class="income">
+                            <select name="income" id="income">
+                                <option value="" disabled selected>
+                                    Välj Kategori
+                                </option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div id="expenseCategoryWrap" class="expense-category">
+                        <span>Kategori (Utgift)</span>
+                        <label class="expenses">
+                            <select name="expenses" id="expenses">
+                                <option value="" disabled selected>
+                                    Välj Kategori
+                                </option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <label>
+                        <span>Notering (Valfritt)</span>
+                        <input
+                            type="text"
+                            id="comment"
+                            placeholder="T.ex Veckohandling på ICA"
+                        />
+                    </label>
+
+                    <label>
+                        <span>Belopp</span>
+                        <input type="number" id="amount" step="0.01" required />
+                    </label>
+
+                    <button id="register">Registrera</button>
+                </form>
+            </div>
+
+            <div class="transactions-container">
+                <h2>Transaktioner</h2>
+
+                <div id="transactionList" class="transaction-list"></div>
+            </div>
         </div>
-
-        <div id="expenseCategoryWrap" class="expense-category">
-          <span>Kategori (Utgift)</span>
-          <label class="expenses">
-            <select name="expenses" id="expenses">
-              <option value="" disabled selected>Välj Kategori</option>
-            </select>
-          </label>
-        </div>
-
-        <label>
-          <span>Notering (Valfritt)</span>
-          <input type="text" id="comment" placeholder="T.ex Veckohandling på ICA">
-        </label>
-
-        <label>
-          <span>Belopp</span>
-          <input type="number" id="amount" step="0.01" required />
-        </label>
-
-        <button id="register">Registrera</button>
-      </form>
-    </div>
-
-    <div class="transactions-container">
-      <h2>Transaktioner</h2>
-
-      <div id="transactionList" class="transaction-list"></div>
-    </div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+        <script type="module" src="/src/main.ts"></script>
+    </body>
 </html>
