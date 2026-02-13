@@ -136,18 +136,18 @@ class BudgetTracker {
     this.updateBalance();
   }
 
-  updateBalance() {
-    const total = this.transactions.reduce((acc, item) => acc + item.amount, 0);
-    const expensesOnly = this.transactions
+  updateBalance(): void {
+    const total: number = this.transactions.reduce((acc, item) => acc + item.amount, 0);
+    const expensesOnly: number = this.transactions
       .filter((item) => item.type === 'expenses')
       .reduce((acc, item) => acc + item.amount, 0);
 
-    const formattedTotal = total.toLocaleString('sv-SE', {
+    const formattedTotal: string = total.toLocaleString('sv-SE', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
 
-    let balanceColor = 'inherit';
+    let balanceColor: string = 'inherit';
 
     if (total > 0) {
       balanceColor = 'var(--secondary-color)';
@@ -155,10 +155,12 @@ class BudgetTracker {
       balanceColor = 'var(--danger-color)';
     }
 
-    this.balanceElement.innerHTML = `
-    <p style="color: ${balanceColor};">Saldo: ${formattedTotal} kr </p>
-    <p>Utgifter: ${Math.abs(expensesOnly).toLocaleString('sv-SE', { minimumFractionDigits: 2 })} kr</p>
-    `;
+    if (this.balanceElement) {
+      this.balanceElement.innerHTML = `
+      <p style="color: ${balanceColor};">Saldo: ${formattedTotal} kr </p>
+      <p>Utgifter: ${Math.abs(expensesOnly).toLocaleString('sv-SE', { minimumFractionDigits: 2 })} kr</p>
+      `;
+    }
   }
 
   populateCategories() {
@@ -217,7 +219,7 @@ typeRadios.forEach((radio) => {
 let isDarkMode = false;
 const toggleButton = document.getElementById('toggleButton');
 
-toggleButton?.addEventListener('click', () => {
+toggleButton.addEventListener('click', () => {
   isDarkMode = !isDarkMode;
   document.body.classList.toggle('dark-mode', isDarkMode);
   toggleButton.classList.toggle('active', isDarkMode);
