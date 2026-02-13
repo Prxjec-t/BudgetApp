@@ -109,12 +109,14 @@ class BudgetTracker {
         const transactionDiv = document.createElement('div');
         transactionDiv.classList.add('transaction', transaction.type);
         transactionDiv.innerHTML = `
+        <div class="transaction-info"
             <span class="transaction-date">${transaction.date}</span>
             <strong>${transaction.description}</strong>
             ${transaction.comment ? `<i>${transaction.comment}</i>` : ''}
             <span class="transaction-amount-container">
             ${formattedAmount} kr 
-            <button class="delete-btn" data-id="${transaction.id}">Delete</button></span>`;
+            <button class="delete-btn" data-id="${transaction.id}">Delete</button></span>
+            </div>`;
         this.transactionList.appendChild(transactionDiv);
       });
 
